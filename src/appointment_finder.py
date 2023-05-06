@@ -95,7 +95,7 @@ def check_appointments(driver, facility_name):
 
 def main(facility_name):
     #print(get_update())
-    res=send_message(f'Bot start crawling for {facility_name}')
+    send_message(f'Bot start crawling for {facility_name}')
     chromedriver_autoinstaller.install()
     driver = selenium.webdriver.Chrome()
 
@@ -105,8 +105,10 @@ def main(facility_name):
         try:
             check_appointments(driver, facility_name)
         except Exception as err:
-            print(f'Exception: {err}')
+            if 'ERR_CONNECTION_REFUSED' in err.msg:
+                seconds_between_checks = 60 * 60
 
+        send_message(f'Sleep: {seconds_between_checks}')
         time.sleep(seconds_between_checks)
 
 
