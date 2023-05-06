@@ -1,15 +1,14 @@
 import datetime
 import time
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+import selenium
+import chromedriver_autoinstaller
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 
-from creds import username, password, facility_name, latest_notification_date, seconds_between_checks
-from telegram import send_message, send_photo
+from creds import username, password, latest_notification_date, seconds_between_checks
+from telegram import send_message, send_photo, get_me, get_update
 from urls import BASE_URL, SIGN_IN_URL, SCHEDULE_URL, APPOINTMENTS_URL
 
 
@@ -48,7 +47,7 @@ def is_worth_notifying(year, month, days):
     return first_available_date_object <= latest_notification_date_object
 
 
-def check_appointments(driver):
+def check_appointments(driver, facility_name):
     driver.get(SCHEDULE_URL)
     log_in(driver)
 
@@ -94,18 +93,17 @@ def check_appointments(driver):
         driver.find_element(By.CLASS_NAME, 'ui-datepicker-next').click()
 
 
-def main():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
+def main(facility_name):
+    #print(get_update())
+    res=send_message(f'Bot start crawling for {facility_name}')
+    chromedriver_autoinstaller.install()
+    driver = selenium.webdriver.Chrome()
 
     while True:
         current_time = time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime())
         print(f'Starting a new check at {current_time}.')
         try:
-            check_appointments(driver)
+            check_appointments(driver, facility_name)
         except Exception as err:
             print(f'Exception: {err}')
 
@@ -113,4 +111,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import fire
+    fire.Fire(main)

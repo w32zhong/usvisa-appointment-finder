@@ -11,6 +11,8 @@ usvisa-appointment-finder```
  uses pip and add configuration to get started:
 
 ```bash
+conda create -n ais-usvisa-info python=3.11
+conda activate ais-usvisa-info
 pip install -r requirements.txt
 ```
 
