@@ -108,8 +108,9 @@ def main(facility_name):
         except Exception as err:
             if 'ERR_CONNECTION_REFUSED' in err.msg:
                 delay = 60 * 60
+                send_message(f'{facility_name}: ERR_CONNECTION_REFUSED!')
 
-        send_message(f'Sleep: {delay}')
+        print('sleep:', delay)
         time.sleep(delay)
         delay = seconds_between_checks
 
