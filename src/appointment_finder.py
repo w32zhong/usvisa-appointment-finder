@@ -98,6 +98,7 @@ def main(facility_name):
     send_message(f'Bot start crawling for {facility_name}')
     chromedriver_autoinstaller.install()
     driver = selenium.webdriver.Chrome()
+    delay = seconds_between_checks
 
     while True:
         current_time = time.strftime('%a, %d %b %Y %H:%M:%S', time.localtime())
@@ -106,10 +107,11 @@ def main(facility_name):
             check_appointments(driver, facility_name)
         except Exception as err:
             if 'ERR_CONNECTION_REFUSED' in err.msg:
-                seconds_between_checks = 60 * 60
+                delay = 60 * 60
 
-        send_message(f'Sleep: {seconds_between_checks}')
-        time.sleep(seconds_between_checks)
+        send_message(f'Sleep: {delay}')
+        time.sleep(delay)
+        delay = seconds_between_checks
 
 
 if __name__ == "__main__":
